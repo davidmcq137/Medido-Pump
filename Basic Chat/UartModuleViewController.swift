@@ -29,6 +29,11 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
     @IBOutlet weak var inputTextField: UITextField!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var switchUI: UISwitch!
+    @IBOutlet weak var Empty: UIButton!
+    @IBOutlet weak var Off: UIButton!
+    @IBOutlet weak var Fill: UIButton!
+    @IBOutlet weak var PumpSpeed: UILabel!
+    
     //Data
     var peripheralManager: CBPeripheralManager?
     var peripheral: CBPeripheral!
@@ -74,23 +79,35 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
     func updateIncomingData () {
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "Notify"), object: nil , queue: nil){
             notification in
-            let appendString = "\n"
-            let myFont = UIFont(name: "Helvetica Neue", size: 15.0)
-            let myAttributes2 = [NSFontAttributeName: myFont!, NSForegroundColorAttributeName: UIColor.red]
-            let attribString = NSAttributedString(string: "[Incoming]: " + (characteristicASCIIValue as String) + appendString, attributes: myAttributes2)
-            let newAsciiText = NSMutableAttributedString(attributedString: self.consoleAsciiText!)
-            self.baseTextView.attributedText = NSAttributedString(string: characteristicASCIIValue as String , attributes: myAttributes2)
+            //let appendString = "\n"
+            //let myFont = UIFont(name: "Helvetica Neue", size: 15.0)
+            //let myAttributes2 = [NSFontAttributeName: myFont!, NSForegroundColorAttributeName: UIColor.red]
+            //let attribString = NSAttributedString(string: "[Incoming]: " + (characteristicASCIIValue as String) + appendString, attributes: myAttributes2)
+            //let newAsciiText = NSMutableAttributedString(attributedString: self.consoleAsciiText!)
+            //self.baseTextView.attributedText = NSAttributedString(string: characteristicASCIIValue as String , attributes: myAttributes2)
             
-            newAsciiText.append(attribString)
+            //newAsciiText.append(attribString)
             
-            self.consoleAsciiText = newAsciiText
-            self.baseTextView.attributedText = self.consoleAsciiText
+            //self.consoleAsciiText = newAsciiText
+            //self.baseTextView.attributedText = self.consoleAsciiText
             
+            //struct med: Codable {
+              //  var namea:String
+                //var vala:Float
+                //var nameb:String
+                //var valb:Float
+            //}
             
+            //let jdec = JSONDecoder()
+            //let cavS = characteristicASCIIValue as String
+            //let decval = jdec.decode(med.self, from: cavS)
+            
+            //print(decval.a, decval.b)
+            //let vf:Float = decval.a
             
             var valueArray = characteristicASCIIValue.components(separatedBy: ",")
             //print("ValArray: \(valueArray[0])")
-            //var vf:Float = (valueArray[0] as NSString).floatValue
+            let vf:Float = (valueArray[0] as NSString).floatValue
             //for va in valueArray {
               //  print("\(va)")
             //}
@@ -102,8 +119,8 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
             
             //let s = NSString(format: "%f", vf)
             //print("calling wV with: \(self.testStr)")
-            self.writeValue(data: self.testStr as String)
-            
+            //.self.writeValue(data: self.testStr as String)
+            self.PumpSpeed.text = "Pump Speed: \(vf)"
         }
     }
     
@@ -221,9 +238,23 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
     
     @IBAction func SliderChanged(_ sender: UISlider) {
         let cv = Int(sender.value)
-        SliderLabel.text = "\(cv)"
+        SliderLabel.text = "Speed(%): \(cv)"
+        writeValue(data: "(Slider: \(cv))")
         //print("slider chg", cv)
     }
     
+    
+    @IBAction func EmptyPushed(_ sender: Any) {
+        print("Empty")
+        writeValue(data: "(Empty)")
+    }
+    @IBAction func OffPushed(_ sender: Any) {
+        print("Off")
+        writeValue(data: "(Off)")
+    }
+    @IBAction func FillPushed(_ sender: Any) {
+        print("Fill")
+        writeValue(data: "(Fill)")
+    }
 }
 
