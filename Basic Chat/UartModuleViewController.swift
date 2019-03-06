@@ -13,50 +13,110 @@
 import UIKit
 import CoreBluetooth
 
-class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, UITextViewDelegate, UITextFieldDelegate {
+class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
+    
+    var FlowRate: GDGaugeView!
+    var PressPSI: GDGaugeView!
+    
     //MARK: Properties
     
-    
-    @IBOutlet weak var SliderLabel: UILabel!
-    
-    @IBOutlet weak var Slider: UISlider!
-    
-   
-    
     //UI
-    @IBOutlet weak var baseTextView: UITextView!
-    @IBOutlet weak var sendButton: UIButton!
-    @IBOutlet weak var inputTextField: UITextField!
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var switchUI: UISwitch!
+
+    @IBOutlet weak var SliderLabel: UILabel!
+    @IBOutlet weak var Slider: UISlider!
+    @IBOutlet weak var LeftGauge: UIView!
+    @IBOutlet weak var RightGauge: UIView!
     @IBOutlet weak var Empty: UIButton!
     @IBOutlet weak var Off: UIButton!
     @IBOutlet weak var Fill: UIButton!
     @IBOutlet weak var PumpSpeed: UILabel!
+    @IBOutlet weak var PulseCount: UILabel!
     
     //Data
     var peripheralManager: CBPeripheralManager?
     var peripheral: CBPeripheral!
-    private var consoleAsciiText:NSAttributedString? = NSAttributedString(string: "")
-    var valueArray: [Float] = []
-    var testStr: String = "(1.2,2.3,3.4,4.5)"
+    //private var consoleAsciiText:NSAttributedString? = NSAttributedString(string: "")
+    //var valueArray: [Float] = []
+    //var testStr: String = "(1.2,2.3,3.4,4.5)"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("View did load")
         
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"Back", style:.plain, target:nil, action:nil)
-        self.baseTextView.delegate = self
-        self.inputTextField.delegate = self
-        //Base text view setup
-        self.baseTextView.layer.borderWidth = 3.0
-        self.baseTextView.layer.borderColor = UIColor.blue.cgColor
-        self.baseTextView.layer.cornerRadius = 3.0
-        self.baseTextView.text = ""
-        //Input Text Field setup
-        self.inputTextField.layer.borderWidth = 2.0
-        self.inputTextField.layer.borderColor = UIColor.blue.cgColor
-        self.inputTextField.layer.cornerRadius = 3.0
+        Empty.layer.borderColor = UIColor.white.cgColor
+        Empty.layer.borderWidth = 2
+        
+        
+        let LGRect =  CGRect(x: LeftGauge.center.x - LeftGauge.bounds.width / 2, y: LeftGauge.center.y - LeftGauge.bounds.height / 2, width: LeftGauge.bounds.width, height: LeftGauge.bounds.height)
+        let RGRect = CGRect(x: RightGauge.center.x - RightGauge.bounds.width / 2, y:RightGauge.center.y - RightGauge.bounds.height / 2, width: RightGauge.bounds.width, height: RightGauge.bounds.height)
+        
+        FlowRate = GDGaugeView(frame: LGRect)
+        PressPSI = GDGaugeView(frame: RGRect)
+        
+        let FlowColor =  UIColor(hexString: "#6699ffff")!
+        let PressColor = UIColor(hexString: "#ffcc00ff")!
+        
+        FlowRate.baseColor = FlowColor
+        PressPSI.baseColor = PressColor
+        
+        // Show circle border
+        FlowRate.showBorder = true
+        PressPSI.showBorder = true
+        
+        // Show full circle border if .showBorder is set to true
+        FlowRate.fullBorder = false
+        PressPSI.fullBorder = false
+        
+        // Set starting degree based on zero degree on bottom center of circle space
+        // -> speed.startDegree = 45.0
+        
+        // Set ending degree based on zero degree on bottom center of circle space
+        // -> speed.endDegree = 270.0
+        
+        // Minimum value
+        FlowRate.min = -60.0
+        PressPSI.min = 0.0
+        
+        // Maximum value
+        FlowRate.max = 60.0
+        PressPSI.max = 10.0
+        
+        // Determine each step value
+        FlowRate.stepValue = 20.0
+        PressPSI.stepValue = 2.0
+        
+        // Color of handle
+        FlowRate.handleColor = FlowColor
+        PressPSI.handleColor = PressColor
+        
+        // Color of seprators
+        FlowRate.sepratorColor = UIColor.black
+        PressPSI.sepratorColor = UIColor.black
+        
+        // Color of texts
+        FlowRate.textColor = FlowColor
+        PressPSI.textColor = PressColor
+        
+        // Center indicator text
+        FlowRate.unitText = "oz/s"
+        PressPSI.unitText = "psi"
+        
+        // Center indicator font
+        //FlowRate.unitTextFont = UIFont.systemFont(ofSize: 24)
+        //PressPSI.unitTextFont = UIFont.systemFont(ofSize: 24)
+        
+        // Indicators text
+        //FlowRate.textFont = UIFont.systemFont(ofSize: 20)
+        //PressPSI.textFont = UIFont.systemFont(ofSize: 20)
+        
+        view.addSubview(FlowRate)
+        view.addSubview(PressPSI)
+        
+        /// After configuring the component, call setupView() method to create the gauge view
+        FlowRate.setupView()
+        PressPSI.setupView()
+        
+        
         //Create and start the peripheral manager
         peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
         //-Notification for updating the text view with incoming text
@@ -64,9 +124,7 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.baseTextView.text = ""
-        
-        
+      //super view did appear goes here?
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -78,82 +136,63 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
     }
     
     func updateIncomingData () {
+        
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "Notify"), object: nil , queue: nil){
             notification in
-            //let appendString = "\n"
-            //let myFont = UIFont(name: "Helvetica Neue", size: 15.0)
-            //let myAttributes2 = [NSFontAttributeName: myFont!, NSForegroundColorAttributeName: UIColor.red]
-            //let attribString = NSAttributedString(string: "[Incoming]: " + (characteristicASCIIValue as String) + appendString, attributes: myAttributes2)
-            //let newAsciiText = NSMutableAttributedString(attributedString: self.consoleAsciiText!)
-            //self.baseTextView.attributedText = NSAttributedString(string: characteristicASCIIValue as String , attributes: myAttributes2)
+            var cas = characteristicASCIIValue as String
+
+            var nr1 = cas.index(of: "(")
+            var nr2 = cas.index(of: ")")
+
+            if nr2 == nil {
+                Fragment = cas
+                //print("Saving Fragment: \(Fragment)")
+                return
+            }
             
-            //newAsciiText.append(attribString)
-            
-            //self.consoleAsciiText = newAsciiText
-            //self.baseTextView.attributedText = self.consoleAsciiText
-            
-            //struct med: Codable {
-              //  var namea:String
-                //var vala:Float
-                //var nameb:String
-                //var valb:Float
-            //}
-            
-            //let jdec = JSONDecoder()
-            //let cavS = characteristicASCIIValue as String
-            //let decval = jdec.decode(med.self, from: cavS)
-            
-            //print(decval.a, decval.b)
-            //let vf:Float = decval.a
-            
-            var valueArray = characteristicASCIIValue.components(separatedBy: ",")
-            //print("ValArray: \(valueArray[0])")
-            let vf:Float = (valueArray[0] as NSString).floatValue
-            //for va in valueArray {
-              //  print("\(va)")
-            //}
-            
-            //print("vf: \(vf)")
-            
-            //vf = vf + 100.0
-            //print("vf: \(vf)")
-            
-            //let s = NSString(format: "%f", vf)
-            //print("calling wV with: \(self.testStr)")
-            //.self.writeValue(data: self.testStr as String)
-            self.PumpSpeed.text = "Pump Speed: \(vf)"
+            if nr1 == nil && Fragment != "" {
+                cas = Fragment + cas
+                print("Recreating cas: \(cas)")
+                Fragment = ""
+            }
+
+            nr1 = cas.index(of: "(")
+            nr2 = cas.index(of: ")")
+
+            if (nr1 == nil && nr2 == nil) {
+                print("Bad value: \(cas)")
+                return
+            }
+
+            let ss1 = cas.index(cas.startIndex, offsetBy: 1)
+            let ss2 = cas.index(cas.endIndex, offsetBy: -1)
+            let casInner = cas[ss1..<ss2]
+            var valueArray = casInner.components(separatedBy: ":")
+            let valName = valueArray[0]
+            let vf:Float = (valueArray[1] as NSString).floatValue
+
+            switch valName {
+            case "Sequence":
+                let modvf = (vf/10).truncatingRemainder(dividingBy: 10)
+                let modnf = -(modvf*12-60)
+                self.PressPSI.currentValue = CGFloat(modvf)
+                self.FlowRate.currentValue = CGFloat(modnf)
+            case "Voltage":
+                self.PumpSpeed.text = "Pump Speed: \(vf)"
+            case "Pulse":
+                self.PulseCount.text = "Pulse Count: \(vf)"
+            default:
+                print("Bad valName: \(valName)")
+            }
         }
     }
     
-    @IBAction func clickSendAction(_ sender: AnyObject) {
-        outgoingData()
-        
-    }
+    //@IBAction func clickSendAction(_ sender: AnyObject) {
+    //    outgoingData()
+    // }
     
-    
-    
-    func outgoingData () {
-        let appendString = "\n"
-        
-        let inputText = inputTextField.text
-        //let foo = valueArray[0]
-        //let inputText = "this is a test of the emergency...";
-        let myFont = UIFont(name: "Helvetica Neue", size: 15.0)
-        let myAttributes1 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): myFont!, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.blue]
-        
-        //writeValue(data: "100.123")
-        writeValue(data: inputText!)
-        
-        let attribString = NSAttributedString(string: "[Outgoing]: " + inputText! + appendString, attributes: convertToOptionalNSAttributedStringKeyDictionary(myAttributes1))
-        let newAsciiText = NSMutableAttributedString(attributedString: self.consoleAsciiText!)
-        newAsciiText.append(attribString)
-        
-        consoleAsciiText = newAsciiText
-        baseTextView.attributedText = consoleAsciiText
-        //erase what's in the text field
-        inputTextField.text = ""
-        
-    }
+    //func outgoingData () {
+    //}
     
     // Write functions
     func writeValue(data: String){
@@ -173,26 +212,6 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
         blePeripheral!.writeValue(ns as Data, for: txCharacteristic!, type: CBCharacteristicWriteType.withResponse)
     }
     
-    
-    
-    //MARK: UITextViewDelegate methods
-    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        if textView === baseTextView {
-            //tapping on consoleview dismisses keyboard
-            inputTextField.resignFirstResponder()
-            return false
-        }
-        return true
-    }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        scrollView.setContentOffset(CGPoint(x:0, y:250), animated: true)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        scrollView.setContentOffset(CGPoint(x:0, y:0), animated: true)
-    }
-    
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn {
             return
@@ -203,31 +222,6 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
     //Check when someone subscribe to our characteristic, start sending the data
     func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
         print("Device subscribe to characteristic")
-    }
-    
-    //This on/off switch sends a value of 1 and 0 to the Arduino
-    //This can be used as a switch or any thing you'd like
-    @IBAction func switchAction(_ sender: Any) {
-        if switchUI.isOn {
-            print("On ")
-            writeCharacteristic(val: 1)
-        }
-        else
-        {
-            print("Off")
-            writeCharacteristic(val: 0)
-            print(writeCharacteristic)
-        }
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        outgoingData()
-        return(true)
     }
     
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
@@ -244,7 +238,6 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
         //print("slider chg", cv)
     }
     
-    
     @IBAction func EmptyPushed(_ sender: Any) {
         print("Empty")
         writeValue(data: "(Empty)")
@@ -257,6 +250,7 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate, U
         print("Fill")
         writeValue(data: "(Fill)")
     }
+    
 }
 
 

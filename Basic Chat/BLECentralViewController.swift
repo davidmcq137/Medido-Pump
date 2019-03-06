@@ -15,6 +15,8 @@ var txCharacteristic : CBCharacteristic?
 var rxCharacteristic : CBCharacteristic?
 var blePeripheral : CBPeripheral?
 var characteristicASCIIValue = NSString()
+var Fragment: String = ""
+
 //var valueList: [Float] = []
 
 
@@ -82,6 +84,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     }
     
     /*We also need to stop scanning at some point so we'll also create a function that calls "stopScan"*/
+    //@objc func cancelScan() {
     @objc func cancelScan() {
         self.centralManager?.stopScan()
         print("Scan Stopped")
@@ -259,7 +262,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         if characteristic == rxCharacteristic {
             if let ASCIIstring = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue) {
                 characteristicASCIIValue = ASCIIstring
-                print("Value Recieved: \((characteristicASCIIValue as String))")
+                //print("Value Recieved: \((characteristicASCIIValue as String))")
                 //var valueArray = characteristicASCIIValue.components(separatedBy: ",")
                 //print("ValArray: \(valueArray[0], valueArray[1], valueArray[2])")
                 //writeValue(data: "100.123")
