@@ -30,7 +30,11 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
     @IBOutlet weak var Off: UIButton!
     @IBOutlet weak var Fill: UIButton!
     @IBOutlet weak var PumpSpeed: UILabel!
-    @IBOutlet weak var PulseCount: UILabel!
+
+    @IBOutlet weak var Clear: UIButton!
+    @IBOutlet weak var FlowRateLabel: UILabel!
+    @IBOutlet weak var RunningTimeLabel: UILabel!
+    
     
     //Data
     var peripheralManager: CBPeripheralManager?
@@ -168,19 +172,47 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
             let ss2 = cas.index(cas.endIndex, offsetBy: -1)
             let casInner = cas[ss1..<ss2]
             var valueArray = casInner.components(separatedBy: ":")
+            if valueArray.count < 1 {
+                return
+            }
             let valName = valueArray[0]
-            let vf:Float = (valueArray[1] as NSString).floatValue
-
+            var vf: Double
+            if valueArray.count > 1 {
+                vf = (valueArray[1] as NSString).doubleValue
+            } else {
+                vf = 0
+            }
             switch valName {
-            case "Sequence":
-                let modvf = (vf/10).truncatingRemainder(dividingBy: 10)
-                let modnf = -(modvf*12-60)
-                self.PressPSI.currentValue = CGFloat(modvf)
-                self.FlowRate.currentValue = CGFloat(modnf)
-            case "Voltage":
-                self.PumpSpeed.text = "Pump Speed: \(vf)"
-            case "Pulse":
-                self.PulseCount.text = "Pulse Count: \(vf)"
+            //case "Sequence":
+            //    let modvf = (vf/10).truncatingRemainder(dividingBy: 10)
+            //    let modnf = -(modvf*12-60)
+            //    self.PressPSI.currentValue = CGFloat(modvf)
+            //    self.FlowRate.currentValue = CGFloat(modnf)
+            //case "Voltage":
+            //    self.PumpSpeed.text = "Pump Speed: \(vf)"
+            //case "Pulse":
+            //    self.PulseCount.text = "Pulse Count: \(vf)"
+            case "rTIM":
+                let rtmins = floor(vf / 60.0)
+                let rtsecs = vf - rtmins * 60
+                let rtf = String(format: "Running Time: %02.0f:%02.0f", rtmins, rtsecs)
+                self.RunningTimeLabel.text = rtf
+            case "pPSI":
+                _ = vf
+                //self.PressPSI.currentValue = CGFloat(vf)
+            case "pPWM":
+                let psf = String(format: "Pump Speed: %.0f %%", 100.0 * vf / 1023.0)
+                self.PumpSpeed.text = psf
+            case "fCNT":
+                let _ = vf
+            case "fRAT":
+                self.FlowRate.currentValue = CGFloat(vf)
+                self.FlowRateLabel.text = "Flow Rate: \(vf)"
+            case "volt1":
+                print("Voltage: \(vf)")
+                self.PressPSI.currentValue = CGFloat(vf*5)
+            case "Heap":
+                print("heap: \(1000*vf)")
             default:
                 print("Bad valName: \(valName)")
             }
@@ -234,7 +266,7 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
     @IBAction func SliderChanged(_ sender: UISlider) {
         let cv = Int(sender.value)
         SliderLabel.text = "Speed(%): \(cv)"
-        writeValue(data: "(Slider: \(cv))")
+        writeValue(data: "(Speed: \(cv))")
         //print("slider chg", cv)
     }
     
@@ -251,6 +283,10 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
         writeValue(data: "(Fill)")
     }
     
+    @IBAction func ClearPushed(_ sender: Any) {
+        print("Clear")
+        writeValue(data: "(Clear)")
+    }
 }
 
 
