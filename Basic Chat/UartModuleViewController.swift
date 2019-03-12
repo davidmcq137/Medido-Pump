@@ -35,13 +35,19 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
     @IBOutlet weak var FlowRateLabel: UILabel!
     @IBOutlet weak var RunningTimeLabel: UILabel!
     
+    @IBOutlet weak var MaxPressureLabel: UILabel!
+    @IBOutlet weak var MaxPressure: UISlider!
+    @IBOutlet weak var BLEState: UILabel!
     
     //Data
     var peripheralManager: CBPeripheralManager?
     var peripheral: CBPeripheral!
+    //var peripheralState: CBPeripheralState
     //private var consoleAsciiText:NSAttributedString? = NSAttributedString(string: "")
     //var valueArray: [Float] = []
     //var testStr: String = "(1.2,2.3,3.4,4.5)"
+    
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -156,7 +162,7 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
             
             if nr1 == nil && Fragment != "" {
                 cas = Fragment + cas
-                print("Recreating cas: \(cas)")
+                //print("Recreating cas: \(cas)")
                 Fragment = ""
             }
 
@@ -170,9 +176,16 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
 
             let ss1 = cas.index(cas.startIndex, offsetBy: 1)
             let ss2 = cas.index(cas.endIndex, offsetBy: -1)
+            if (ss2 < ss1 ) {
+                print("ss2: \(ss2), ss1: \(ss1), cas: \(cas)")
+                return
+            }
             let casInner = cas[ss1..<ss2]
             var valueArray = casInner.components(separatedBy: ":")
+            
+            
             if valueArray.count < 1 {
+                print("vA.c < 1 \(casInner)")
                 return
             }
             let valName = valueArray[0]
@@ -180,7 +193,8 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
             if valueArray.count > 1 {
                 vf = (valueArray[1] as NSString).doubleValue
             } else {
-                vf = 0
+                print("vA.c not > 1 \(casInner)")
+                return
             }
             switch valName {
             //case "Sequence":
@@ -200,8 +214,8 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
             case "pPSI":
                 _ = vf
                 //self.PressPSI.currentValue = CGFloat(vf)
-            case "pPWM":
-                let psf = String(format: "Pump Speed: %.0f %%", 100.0 * vf / 1023.0)
+            case "rPWM":
+                let psf = String(format: "Pump Running Speed: %.0f %%", 100.0 * vf / 1023.0)
                 self.PumpSpeed.text = psf
             case "fCNT":
                 let _ = vf
@@ -209,10 +223,18 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
                 self.FlowRate.currentValue = CGFloat(vf)
                 self.FlowRateLabel.text = "Flow Rate: \(vf)"
             case "volt1":
-                print("Voltage: \(vf)")
+                //print("Voltage: \(vf)")
                 self.PressPSI.currentValue = CGFloat(vf*5)
             case "Heap":
-                print("heap: \(1000*vf)")
+                //print("heap: \(1000*vf)")
+                break
+            case "Init":
+                print("Case init")
+                self.Slider.value = 0
+                self.SliderLabel.text = String(format: "Setpoint Speed: %.0f %%", 0) //"Setpoint Speed(%): 0"
+                print("Init")
+            case "pPWM":
+                break
             default:
                 print("Bad valName: \(valName)")
             }
@@ -265,10 +287,18 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
     
     @IBAction func SliderChanged(_ sender: UISlider) {
         let cv = Int(sender.value)
-        SliderLabel.text = "Speed(%): \(cv)"
+        SliderLabel.text = "Setpoint Speed(%): \(cv)"
         writeValue(data: "(Speed: \(cv))")
-        //print("slider chg", cv)
+        print("(Speed: \(cv))")
     }
+    
+    @IBAction func MaxPressureChanged(_ sender: UISlider) {
+        let mcv = Int(sender.value * 10)
+        MaxPressureLabel.text = "Max Pressure: \(Double(mcv)/10) psi"
+        writeValue(data: "(Press: \(mcv))")
+        print("(Press: \(mcv))")
+    }
+    
     
     @IBAction func EmptyPushed(_ sender: Any) {
         print("Empty")
