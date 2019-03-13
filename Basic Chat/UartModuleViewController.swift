@@ -30,31 +30,28 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
     @IBOutlet weak var Off: UIButton!
     @IBOutlet weak var Fill: UIButton!
     @IBOutlet weak var PumpSpeed: UILabel!
-
     @IBOutlet weak var Clear: UIButton!
     @IBOutlet weak var FlowRateLabel: UILabel!
     @IBOutlet weak var RunningTimeLabel: UILabel!
-    
     @IBOutlet weak var MaxPressureLabel: UILabel!
     @IBOutlet weak var MaxPressure: UISlider!
     @IBOutlet weak var BLEState: UILabel!
+    @IBOutlet weak var FuelFlow: UILabel!
     
     //Data
+
     var peripheralManager: CBPeripheralManager?
     var peripheral: CBPeripheral!
-    //var peripheralState: CBPeripheralState
-    //private var consoleAsciiText:NSAttributedString? = NSAttributedString(string: "")
-    //var valueArray: [Float] = []
-    //var testStr: String = "(1.2,2.3,3.4,4.5)"
-    
-   
-    
+
     override func viewDidLoad() {
+        
+        
         super.viewDidLoad()
         print("View did load")
         
-        Empty.layer.borderColor = UIColor.white.cgColor
-        Empty.layer.borderWidth = 2
+
+        //Empty.layer.borderColor = UIColor.white.cgColor
+        //Empty.layer.borderWidth = 2
         
         
         let LGRect =  CGRect(x: LeftGauge.center.x - LeftGauge.bounds.width / 2, y: LeftGauge.center.y - LeftGauge.bounds.height / 2, width: LeftGauge.bounds.width, height: LeftGauge.bounds.height)
@@ -135,6 +132,15 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
       //super view did appear goes here?
+        BLETimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            //print("Ding!")
+            if BLEConnected == true {
+                self.BLEState.textColor = UIColor(hexString: "#6699ffff")
+            } else {
+                self.BLEState.textColor = UIColor.red
+            }
+        }
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -142,7 +148,7 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
         // self.peripheralManager = nil
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-        
+        BLETimer?.invalidate()
     }
     
     func updateIncomingData () {
@@ -215,10 +221,11 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
                 _ = vf
                 //self.PressPSI.currentValue = CGFloat(vf)
             case "rPWM":
-                let psf = String(format: "Pump Running Speed: %.0f %%", 100.0 * vf / 1023.0)
+                let psf = String(format: "Pump Speed: %.0f %%", 100.0 * vf / 1023.0)
                 self.PumpSpeed.text = psf
             case "fCNT":
-                let _ = vf
+                let fstr = String(format: "Total Fuel Flow %01.1f oz", vf / 10)
+                self.FuelFlow.text = fstr
             case "fRAT":
                 self.FlowRate.currentValue = CGFloat(vf)
                 self.FlowRateLabel.text = "Flow Rate: \(vf)"

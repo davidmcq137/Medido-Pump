@@ -16,6 +16,9 @@ var rxCharacteristic : CBCharacteristic?
 var blePeripheral : CBPeripheral?
 var characteristicASCIIValue = NSString()
 var Fragment: String = ""
+var BLEConnected = false
+var BLETimer: Timer?
+
 
 //var valueList: [Float] = []
 
@@ -148,6 +151,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("*****************************")
         print("Connection complete")
+        BLEConnected = true
         print("Peripheral info: \(String(describing: blePeripheral))")
         
         //Stop Scan- We don't need to scan once we've connected to a peripheral. We got what we came for.
@@ -311,6 +315,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Disconnected")
+        BLEConnected = false
     }
     
     
@@ -345,7 +350,13 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         if peripheral.name == nil {
             cell.peripheralLabel.text = "nil"
         } else {
-            cell.peripheralLabel.text = peripheral.name
+            print("periph name: \(peripheral.name ?? "none")")
+            if peripheral.name! == "Adafruit Bluefruit LE" {
+                cell.peripheralLabel.text = "Medido Pump"
+            } else {
+                cell.peripheralLabel.text = peripheral.name
+            }
+            //cell.peripheralLabel.text = peripheral.name
         }
         cell.rssiLabel.text = "RSSI: \(RSSI)"
         

@@ -117,7 +117,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="47" translatesAutoresizingMaskIntoConstraints="NO" id="hFw-wA-l6N">
-                                <rect key="frame" x="21" y="509" width="328" height="46"/>
+                                <rect key="frame" x="21" y="563" width="328" height="46"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yya-kC-EUm">
                                         <rect key="frame" x="0.0" y="0.0" width="78" height="46"/>
@@ -165,8 +165,8 @@
                                     </button>
                                 </subviews>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pump Running Speed: 0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gC5-HO-Yk3">
-                                <rect key="frame" x="20" y="709.33333333333337" width="230" height="26.333333333333371"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pump Speed: 0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gC5-HO-Yk3">
+                                <rect key="frame" x="20" y="709.33333333333337" width="146.33333333333334" height="26.333333333333371"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -176,14 +176,14 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Flow Rate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kZP-dV-yVK">
-                                <rect key="frame" x="51.333333333333336" y="271" width="97.333333333333314" height="27.666666666666686"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <rect key="frame" x="58.666666666666657" y="271" width="83" height="23"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pressure" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wEJ-H3-fPU">
-                                <rect key="frame" x="229.00000000000003" y="272" width="86.333333333333343" height="27.666666666666686"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <rect key="frame" x="234.66666666666666" y="272" width="74.666666666666657" height="23"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                 <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -208,7 +208,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nNd-Oc-cSL">
-                                <rect key="frame" x="268" y="723" width="81" height="47"/>
+                                <rect key="frame" x="184.33333333333337" y="723" width="164.66666666666663" height="47"/>
                                 <color key="backgroundColor" red="0.51198209596756383" green="0.087025530710007626" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="47" id="0zH-nb-CQf"/>
@@ -233,30 +233,36 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mrE-Ki-rx9">
-                                <rect key="frame" x="18" y="419" width="339" height="31"/>
-                                <color key="tintColor" red="0.511982096" green="0.087025530709999993" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <rect key="frame" x="18" y="473" width="339" height="31"/>
+                                <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="SliderChanged:" destination="aQA-m6-Bjv" eventType="valueChanged" id="V6U-3H-po2"/>
                                 </connections>
                             </slider>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="5" minValue="0.0" maxValue="10" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y9r-Vj-cow">
-                                <rect key="frame" x="18" y="347" width="339" height="31"/>
-                                <color key="tintColor" red="0.511982096" green="0.087025530709999993" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <rect key="frame" x="18" y="401" width="339" height="31"/>
+                                <color key="tintColor" red="1" green="0.95753830650000005" blue="0.1637142" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="MaxPressureChanged:" destination="aQA-m6-Bjv" eventType="valueChanged" id="y2N-gQ-M7m"/>
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Setpoint Speed: 0 %" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p4D-1D-xfd">
-                                <rect key="frame" x="109.66666666666667" y="390.66666666666669" width="155.66666666666663" height="20.333333333333314"/>
+                                <rect key="frame" x="109.66666666666667" y="444.66666666666669" width="155.66666666666663" height="20.333333333333314"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Max Pressure: 5.0 psi" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wPf-PL-hnY">
-                                <rect key="frame" x="106.00000000000001" y="318.66666666666669" width="163.33333333333337" height="20.333333333333314"/>
+                                <rect key="frame" x="106.00000000000001" y="372.66666666666669" width="163.33333333333337" height="20.333333333333314"/>
                                 <color key="tintColor" red="0.511982096" green="0.087025530709999993" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total Fuel Flow 0.0 oz" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aEn-Ss-H1J">
+                                <rect key="frame" x="76.000000000000014" y="314" width="223.33333333333337" height="28.666666666666686"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="7oG-KU-PTY">
@@ -289,9 +295,11 @@
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8Xw-Zr-B5c" secondAttribute="trailing" constant="20" symbolic="YES" id="ctW-tf-JId"/>
                             <constraint firstItem="FS8-jt-UpK" firstAttribute="leading" secondItem="Uf4-y2-vXS" secondAttribute="leading" constant="189" id="eEV-CV-1Q9"/>
                             <constraint firstItem="8Xw-Zr-B5c" firstAttribute="leading" secondItem="Uf4-y2-vXS" secondAttribute="leading" constant="20" symbolic="YES" id="fwt-33-IV8"/>
-                            <constraint firstItem="wPf-PL-hnY" firstAttribute="top" secondItem="kZP-dV-yVK" secondAttribute="bottom" constant="20" id="hp8-zG-bju"/>
+                            <constraint firstItem="aEn-Ss-H1J" firstAttribute="top" secondItem="wEJ-H3-fPU" secondAttribute="bottom" constant="19" id="glE-75-a64"/>
+                            <constraint firstItem="wPf-PL-hnY" firstAttribute="top" secondItem="aEn-Ss-H1J" secondAttribute="bottom" constant="30" id="hp8-zG-bju"/>
                             <constraint firstItem="gC5-HO-Yk3" firstAttribute="top" secondItem="8Xw-Zr-B5c" secondAttribute="bottom" constant="8" symbolic="YES" id="lge-uR-fE9"/>
                             <constraint firstAttribute="trailing" secondItem="FS8-jt-UpK" secondAttribute="trailing" constant="20" symbolic="YES" id="m7p-yX-zOw"/>
+                            <constraint firstItem="aEn-Ss-H1J" firstAttribute="centerX" secondItem="Uf4-y2-vXS" secondAttribute="centerX" id="oIn-fW-hcE"/>
                             <constraint firstItem="kZP-dV-yVK" firstAttribute="centerX" secondItem="7oG-KU-PTY" secondAttribute="centerX" id="ol9-gU-G1J"/>
                             <constraint firstItem="kZP-dV-yVK" firstAttribute="top" secondItem="7oG-KU-PTY" secondAttribute="bottom" constant="60" id="pC4-pZ-L5J"/>
                             <constraint firstItem="Y9r-Vj-cow" firstAttribute="centerX" secondItem="Uf4-y2-vXS" secondAttribute="centerX" id="rMV-6A-kjR"/>
@@ -315,6 +323,7 @@
                         <outlet property="Empty" destination="Yya-kC-EUm" id="tpF-Kl-gay"/>
                         <outlet property="Fill" destination="f7y-AU-QpT" id="b7l-GT-ZF8"/>
                         <outlet property="FlowRateLabel" destination="8Xw-Zr-B5c" id="PTy-IK-cXM"/>
+                        <outlet property="FuelFlow" destination="aEn-Ss-H1J" id="MAa-Lt-RSI"/>
                         <outlet property="LeftGauge" destination="7oG-KU-PTY" id="F4q-Qw-BUn"/>
                         <outlet property="MaxPressure" destination="Y9r-Vj-cow" id="Bhk-Xb-Sic"/>
                         <outlet property="MaxPressureLabel" destination="wPf-PL-hnY" id="qHN-Pb-sNg"/>
