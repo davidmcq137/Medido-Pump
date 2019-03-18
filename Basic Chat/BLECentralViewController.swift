@@ -128,11 +128,19 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         self.RSSIs.append(RSSI)
         peripheral.delegate = self
         self.baseTableView.reloadData()
-        if blePeripheral == nil {
+        if blePeripheral != nil {
             print("Found new pheripheral devices with services")
             print("Peripheral name: \(String(describing: peripheral.name))")
             print("**********************************")
             print ("Advertisement Data : \(advertisementData)")
+        }
+        //
+        // check if we have the BTE id of the device we are configured for
+        // todo: arrange persistent storage for this value at a later time .. a config option is needed
+        //
+        if blePeripheral?.identifier.uuidString == "982526B8-658D-D0CB-5280-2049D0BF8305" {
+            Fragment = ""
+            connectToDevice()
         }
     }
     
@@ -152,11 +160,13 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         print("*****************************")
         print("Connection complete")
         BLEConnected = true
+        let BLE_id = blePeripheral!.identifier.uuidString
+        print("Peripheral ID: \(BLE_id)")
         print("Peripheral info: \(String(describing: blePeripheral))")
         
         //Stop Scan- We don't need to scan once we've connected to a peripheral. We got what we came for.
         centralManager?.stopScan()
-        print("Scan Stopped")
+        print("Called centralManager: Scan Stopped")
         
         //Erase data that we might have
         data.length = 0
@@ -316,6 +326,9 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Disconnected")
         BLEConnected = false
+        // no point ot restarting scan here .. need to check periodically in incoming data loop
+        //print("Restarting Scan")
+        //startScan()
     }
     
     

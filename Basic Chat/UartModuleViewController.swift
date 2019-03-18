@@ -105,7 +105,7 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
         PressPSI.textColor = PressColor
         
         // Center indicator text
-        FlowRate.unitText = "oz/s"
+        FlowRate.unitText = "oz/min"
         PressPSI.unitText = "psi"
         
         // Center indicator font
@@ -156,19 +156,21 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "Notify"), object: nil , queue: nil){
             notification in
             var cas = characteristicASCIIValue as String
-
+            //print("cas: \(cas)")
             var nr1 = cas.index(of: "(")
             var nr2 = cas.index(of: ")")
 
             if nr2 == nil {
+                //print("nr2 is nil, cas, frag = \(cas), \(Fragment)")
                 Fragment = cas
                 //print("Saving Fragment: \(Fragment)")
                 return
             }
             
             if nr1 == nil && Fragment != "" {
+                //print("nr1 is nil, cas, frag = \(cas), \(Fragment)")
                 cas = Fragment + cas
-                //print("Recreating cas: \(cas)")
+                //print("Recreated cas: \(cas)")
                 Fragment = ""
             }
 
@@ -224,7 +226,7 @@ class UartModuleViewController: UIViewController, CBPeripheralManagerDelegate {
                 let psf = String(format: "Pump Speed: %.0f %%", 100.0 * vf / 1023.0)
                 self.PumpSpeed.text = psf
             case "fCNT":
-                let fstr = String(format: "Total Fuel Flow %01.1f oz", vf / 10)
+                let fstr = String(format: "Total Fuel Flow %01.1f oz", vf)
                 self.FuelFlow.text = fstr
             case "fRAT":
                 self.FlowRate.currentValue = CGFloat(vf)
